@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arif Hossen — Graphics Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0c0a;
+    --bone: #f0ede6;
+    --ash: #b8b3a8;
+    --ember: #c8390a;
+    --fog: #1e1c19;
+    --smoke: #2e2b27;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--serif);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--ember);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+    mix-blend-mode: normal;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(200,57,10,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.18s ease, width 0.25s ease, height 0.25s ease, opacity 0.2s;
+  }
+  body:hover .cursor-ring { opacity: 1; }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    mix-blend-mode: normal;
+  }
+  nav::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(13,12,10,0.85), transparent);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--bone);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--bone); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 0 80px 48px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+  .hero-name {
+    font-size: clamp(52px, 6vw, 86px);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    color: var(--bone);
+    animation: fadeUp 1s ease 0.4s both;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--ash);
+  }
+  .hero-desc {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--ash);
+    line-height: 1.7;
+    max-width: 360px;
+    margin-top: 28px;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 44px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(240,237,230,0.25);
+    padding-bottom: 6px;
+    transition: color 0.3s, border-color 0.3s;
+    animation: fadeUp 1s ease 0.8s both;
+  }
+  .hero-cta:hover { color: var(--ember); border-color: var(--ember); }
+  .hero-cta-arrow { transition: transform 0.3s; }
+  .hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-art {
+    position: absolute;
+    inset: 0;
+    background: var(--fog);
+  }
+  /* Generative dark art - layered SVG shapes */
+  .hero-art svg {
+    width: 100%; height: 100%;
+    position: absolute;
+    inset: 0;
+  }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    right: 48px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ash);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    opacity: 0.5;
+    animation: fadeUp 1.2s ease 1.2s both;
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    border-top: 1px solid rgba(240,237,230,0.08);
+    border-bottom: 1px solid rgba(240,237,230,0.08);
+    padding: 16px 0;
+    overflow: hidden;
+    background: var(--fog);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    white-space: nowrap;
+    animation: marquee 22s linear infinite;
+  }
+  .marquee-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ash);
+    padding: 0 40px;
+    flex-shrink: 0;
+  }
+  .marquee-item span { color: var(--ember); margin-right: 40px; }
+
+  /* WORK SECTION */
+  .section {
+    padding: 120px 48px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 72px;
+    border-bottom: 1px solid rgba(240,237,230,0.08);
+    padding-bottom: 24px;
+  }
+  .section-title {
+    font-size: clamp(36px, 4vw, 54px);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--ash); }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+  }
+
+  .works-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .work-item {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+    group: true;
+  }
+  .work-item:first-child {
+    grid-column: span 2;
+    aspect-ratio: 16/7;
+  }
+  .work-item:not(:first-child) {
+    aspect-ratio: 4/3;
+  }
+  .work-thumb {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s;
+    filter: brightness(0.75) saturate(0.7);
+  }
+  .work-thumb-placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .work-item:hover .work-thumb-placeholder { transform: scale(1.04); }
+  .work-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(13,12,10,0.92) 0%, rgba(13,12,10,0.1) 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .work-item:hover .work-overlay { opacity: 1; }
+  .work-cat {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .work-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: var(--bone);
+  }
+  .work-bottom-strip {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    transition: opacity 0.3s;
+  }
+  .work-item:hover .work-bottom-strip { opacity: 0; }
+  .work-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(240,237,230,0.5);
+  }
+
+  /* ABOUT */
+  .about-section {
+    padding: 120px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    background: var(--fog);
+  }
+  .about-visual {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+  }
+  .about-art {
+    width: 100%; height: 100%;
+    background: var(--smoke);
+  }
+  .about-badge {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: var(--ember);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bone);
+    line-height: 1.6;
+    animation: spin 20s linear infinite;
+  }
+  .about-content {}
+  .about-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .about-heading {
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 28px;
+  }
+  .about-heading em { font-style: italic; color: var(--ash); }
+  .about-body {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--ash);
+    margin-bottom: 20px;
+  }
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ash);
+    border: 1px solid rgba(184,179,168,0.2);
+    padding: 6px 14px;
+    border-radius: 2px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .skill-tag:hover { border-color: var(--ember); color: var(--bone); }
+
+  /* SERVICES */
+  .services-section {
+    padding: 120px 48px;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(240,237,230,0.06);
+    border: 1px solid rgba(240,237,230,0.06);
+    margin-top: 0;
+  }
+  .service-item {
+    padding: 48px 36px;
+    background: var(--ink);
+    transition: background 0.4s;
+  }
+  .service-item:hover { background: var(--fog); }
+  .service-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ember);
+    margin-bottom: 24px;
+    display: block;
+  }
+  .service-name {
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 16px;
+    color: var(--bone);
+  }
+  .service-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--ash);
+  }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 120px 48px;
+    background: var(--fog);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-bg-text {
+    position: absolute;
+    font-size: clamp(100px, 18vw, 220px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(240,237,230,0.025);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .contact-heading {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .contact-heading em { font-style: italic; color: var(--ash); }
+  .contact-email {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--bone);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(240,237,230,0.2);
+    padding-bottom: 4px;
+    transition: color 0.3s, border-color 0.3s;
+    position: relative;
+  }
+  .contact-email:hover { color: var(--ember); border-color: var(--ember); }
+  .contact-socials {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 56px;
+    position: relative;
+  }
+  .contact-socials a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-socials a:hover { color: var(--bone); }
+
+  /* FOOTER */
+  footer {
+    padding: 28px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(240,237,230,0.06);
+  }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ash);
+    opacity: 0.5;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 120px 24px 60px; justify-content: flex-end; }
+    .hero-right { height: 50vw; }
+    .section { padding: 80px 24px; }
+    .works-grid { grid-template-columns: 1fr; }
+    .work-item:first-child { grid-column: span 1; aspect-ratio: 4/3; }
+    .about-section { grid-template-columns: 1fr; padding: 80px 24px; gap: 48px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .contact-section { padding: 80px 24px; }
+    footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Arif Hossen</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Graphics Designer — Dhaka, BD</p>
+    <h1 class="hero-name">Arif<br><em>Hossen</em></h1>
+    <p class="hero-desc">Crafting visual experiences where darkness meets energy — design that moves people.</p>
+    <a href="#work" class="hero-cta">
+      View Selected Work
+      <span class="hero-cta-arrow">→</span>
+    </a>
+    <span class="hero-scroll-hint">Scroll</span>
+  </div>
+  <div class="hero-right">
+    <div class="hero-art">
+      <svg viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="rg1" cx="60%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#3d1005"/>
+            <stop offset="100%" stop-color="#0d0c0a"/>
+          </radialGradient>
+          <radialGradient id="rg2" cx="30%" cy="80%" r="50%">
+            <stop offset="0%" stop-color="#1a0803"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+        </defs>
+        <rect width="600" height="900" fill="url(#rg1)"/>
+        <rect width="600" height="900" fill="url(#rg2)"/>
+        <!-- Abstract structural lines -->
+        <line x1="0" y1="220" x2="600" y2="180" stroke="rgba(200,57,10,0.12)" stroke-width="1"/>
+        <line x1="0" y1="380" x2="600" y2="340" stroke="rgba(200,57,10,0.08)" stroke-width="0.5"/>
+        <line x1="0" y1="540" x2="600" y2="500" stroke="rgba(240,237,230,0.04)" stroke-width="0.5"/>
+        <line x1="0" y1="680" x2="600" y2="640" stroke="rgba(240,237,230,0.03)" stroke-width="0.5"/>
+        <!-- Large geometric form -->
+        <polygon points="300,80 560,400 420,820 180,820 40,400" fill="none" stroke="rgba(200,57,10,0.15)" stroke-width="1"/>
+        <polygon points="300,180 500,420 390,760 210,760 100,420" fill="none" stroke="rgba(200,57,10,0.08)" stroke-width="0.5"/>
+        <!-- Ember glow orb -->
+        <circle cx="380" cy="260" r="90" fill="rgba(200,57,10,0.07)"/>
+        <circle cx="380" cy="260" r="50" fill="rgba(200,57,10,0.09)"/>
+        <circle cx="380" cy="260" r="18" fill="rgba(200,57,10,0.22)"/>
+        <!-- Floating particle dots -->
+        <circle cx="120" cy="150" r="2" fill="rgba(240,237,230,0.3)"/>
+        <circle cx="480" cy="500" r="1.5" fill="rgba(240,237,230,0.2)"/>
+        <circle cx="200" cy="650" r="1" fill="rgba(200,57,10,0.5)"/>
+        <circle cx="520" cy="700" r="2" fill="rgba(240,237,230,0.15)"/>
+        <circle cx="60" cy="440" r="1.5" fill="rgba(200,57,10,0.3)"/>
+        <circle cx="350" cy="780" r="1" fill="rgba(240,237,230,0.25)"/>
+        <!-- Horizontal rule lines -->
+        <line x1="40" y1="600" x2="160" y2="600" stroke="rgba(240,237,230,0.12)" stroke-width="0.5"/>
+        <line x1="40" y1="608" x2="100" y2="608" stroke="rgba(200,57,10,0.3)" stroke-width="0.5"/>
+        <!-- Text element (decorative) -->
+        <text x="40" y="860" font-family="Georgia, serif" font-size="11" fill="rgba(240,237,230,0.15)" letter-spacing="4">DESIGN / MOTION / IDENTITY</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item"><span>✦</span> Brand Identity</span>
+    <span class="marquee-item"><span>✦</span> Visual Design</span>
+    <span class="marquee-item"><span>✦</span> Typography</span>
+    <span class="marquee-item"><span>✦</span> Motion Graphics</span>
+    <span class="marquee-item"><span>✦</span> Art Direction</span>
+    <span class="marquee-item"><span>✦</span> Print Design</span>
+    <span class="marquee-item"><span>✦</span> UI / UX</span>
+    <span class="marquee-item"><span>✦</span> Brand Identity</span>
+    <span class="marquee-item"><span>✦</span> Visual Design</span>
+    <span class="marquee-item"><span>✦</span> Typography</span>
+    <span class="marquee-item"><span>✦</span> Motion Graphics</span>
+    <span class="marquee-item"><span>✦</span> Art Direction</span>
+    <span class="marquee-item"><span>✦</span> Print Design</span>
+    <span class="marquee-item"><span>✦</span> UI / UX</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section class="section" id="work">
+  <div class="section-header reveal">
+    <h2 class="section-title">Selected <em>Work</em></h2>
+    <span class="section-num">— 01</span>
+  </div>
+  <div class="works-grid">
+
+    <div class="work-item reveal">
+      <div class="work-thumb-placeholder" style="background: linear-gradient(135deg, #1e1c19 0%, #2e1208 50%, #1a0a04 100%); aspect-ratio:16/7;">
+        <svg viewBox="0 0 900 400" style="width:100%;height:100%;position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="wg1" cx="40%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#c8390a" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+          </defs>
+          <rect width="900" height="400" fill="url(#wg1)"/>
+          <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif" font-size="72" font-weight="300" fill="rgba(240,237,230,0.06)" letter-spacing="-2">ECLIPSE</text>
+          <circle cx="450" cy="200" r="120" fill="none" stroke="rgba(200,57,10,0.2)" stroke-width="1"/>
+          <circle cx="450" cy="200" r="80" fill="none" stroke="rgba(200,57,10,0.1)" stroke-width="0.5"/>
+          <circle cx="450" cy="200" r="30" fill="rgba(200,57,10,0.12)"/>
+          <line x1="0" y1="200" x2="900" y2="200" stroke="rgba(240,237,230,0.04)" stroke-width="0.5"/>
+          <line x1="450" y1="0" x2="450" y2="400" stroke="rgba(240,237,230,0.04)" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="work-bottom-strip">
+        <span class="work-label">01 — Brand Identity</span>
+      </div>
+      <div class="work-overlay">
+        <p class="work-cat">Brand Identity</p>
+        <p class="work-title">Eclipse — Luxury Brand System</p>
+      </div>
+    </div>
+
+    <div class="work-item reveal reveal-delay-1">
+      <div class="work-thumb-placeholder" style="background: linear-gradient(160deg, #1e1c19 0%, #0d1a14 100%); aspect-ratio:4/3;">
+        <svg viewBox="0 0 500 400" style="width:100%;height:100%;position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+          <rect width="500" height="400" fill="none"/>
+          <rect x="60" y="60" width="380" height="280" fill="none" stroke="rgba(240,237,230,0.06)" stroke-width="1"/>
+          <rect x="90" y="90" width="320" height="220" fill="none" stroke="rgba(200,57,10,0.12)" stroke-width="0.5"/>
+          <text x="50%" y="48%" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif" font-size="44" font-weight="300" fill="rgba(240,237,230,0.08)" letter-spacing="8">VOID</text>
+          <circle cx="250" cy="200" r="60" fill="rgba(29,158,117,0.07)"/>
+          <circle cx="250" cy="200" r="20" fill="rgba(29,158,117,0.1)"/>
+        </svg>
+      </div>
+      <div class="work-bottom-strip">
+        <span class="work-label">02 — Poster Series</span>
+      </div>
+      <div class="work-overlay">
+        <p class="work-cat">Poster Series</p>
+        <p class="work-title">Void — Exhibition Design</p>
+      </div>
+    </div>
+
+    <div class="work-item reveal reveal-delay-2">
+      <div class="work-thumb-placeholder" style="background: linear-gradient(140deg, #18100c 0%, #2e1a0a 100%); aspect-ratio:4/3;">
+        <svg viewBox="0 0 500 400" style="width:100%;height:100%;position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+          <rect width="500" height="400" fill="none"/>
+          <polygon points="250,40 460,340 40,340" fill="none" stroke="rgba(200,57,10,0.18)" stroke-width="1"/>
+          <polygon points="250,100 400,320 100,320" fill="none" stroke="rgba(200,57,10,0.08)" stroke-width="0.5"/>
+          <text x="50%" y="70%" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="rgba(240,237,230,0.2)" letter-spacing="6">IGNITE STUDIO</text>
+        </svg>
+      </div>
+      <div class="work-bottom-strip">
+        <span class="work-label">03 — Logo Design</span>
+      </div>
+      <div class="work-overlay">
+        <p class="work-cat">Logo Design</p>
+        <p class="work-title">Ignite — Studio Mark</p>
+      </div>
+    </div>
+
+    <div class="work-item reveal reveal-delay-1">
+      <div class="work-thumb-placeholder" style="background: linear-gradient(120deg, #0e0e18 0%, #1c1a2e 100%); aspect-ratio:4/3;">
+        <svg viewBox="0 0 500 400" style="width:100%;height:100%;position:absolute;inset:0;" preserveAspectRatio="xMidYMid slice">
+          <rect width="500" height="400" fill="none"/>
+          <line x1="0" y1="80" x2="500" y2="80" stroke="rgba(240,237,230,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="160" x2="500" y2="160" stroke="rgba(240,237,230,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="240" x2="500" y2="240" stroke="rgba(240,237,230,0.05)" stroke-width="0.5"/>
+          <line x1="0" y1="320" x2="500" y2="320" stroke="rgba(240,237,230,0.05)" stroke-width="0.5"/>
+          <text x="50" y="210" font-family="Georgia,serif" font-size="56" font-weight="300" fill="rgba(240,237,230,0.09)" letter-spacing="-2">Nox</text>
+          <text x="50" y="260" font-family="'DM Mono',monospace" font-size="11" fill="rgba(200,57,10,0.4)" letter-spacing="4">EDITORIAL DESIGN</text>
+          <rect x="50" y="270" width="80" height="0.5" fill="rgba(200,57,10,0.4)"/>
+        </svg>
+      </div>
+      <div class="work-bottom-strip">
+        <span class="work-label">04 — Editorial</span>
+      </div>
+      <div class="work-overlay">
+        <p class="work-cat">Editorial Design</p>
+        <p class="work-title">Nox — Magazine Layout</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-visual reveal">
+    <div class="about-art">
+      <svg viewBox="0 0 400 540" style="width:100%;height:100%;" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <radialGradient id="ag1" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#2e1208"/>
+            <stop offset="100%" stop-color="#1e1c19"/>
+          </radialGradient>
+        </defs>
+        <rect width="400" height="540" fill="url(#ag1)"/>
+        <circle cx="200" cy="210" r="130" fill="none" stroke="rgba(200,57,10,0.15)" stroke-width="1"/>
+        <circle cx="200" cy="210" r="90" fill="none" stroke="rgba(200,57,10,0.08)" stroke-width="0.5"/>
+        <!-- Stylized face silhouette suggestion -->
+        <ellipse cx="200" cy="200" rx="55" ry="70" fill="rgba(240,237,230,0.05)"/>
+        <ellipse cx="200" cy="310" rx="80" ry="50" fill="rgba(240,237,230,0.04)"/>
+        <text x="200" y="490" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="rgba(240,237,230,0.2)" letter-spacing="4">ARIF HOSSEN</text>
+        <line x1="120" y1="480" x2="280" y2="480" stroke="rgba(200,57,10,0.25)" stroke-width="0.5"/>
+      </svg>
+    </div>
+    <div class="about-badge">Available<br>for work</div>
+  </div>
+  <div class="about-content reveal reveal-delay-1">
+    <p class="about-label">About</p>
+    <h2 class="about-heading">Design is how I<br><em>translate feeling</em><br>into form.</h2>
+    <p class="about-body">I'm Arif Hossen, a graphics designer based in Dhaka. I create visual identities, editorial layouts, and digital experiences that carry emotional weight — work that doesn't just look good, but feels like something.</p>
+    <p class="about-body">My style lives in the tension between atmosphere and energy: dark by nature, charged by intent.</p>
+    <div class="skills-list">
+      <span class="skill-tag">Brand Identity</span>
+      <span class="skill-tag">Typography</span>
+      <span class="skill-tag">Print Design</span>
+      <span class="skill-tag">Motion Graphics</span>
+      <span class="skill-tag">UI Design</span>
+      <span class="skill-tag">Art Direction</span>
+      <span class="skill-tag">Photoshop</span>
+      <span class="skill-tag">Illustrator</span>
+      <span class="skill-tag">Figma</span>
+      <span class="skill-tag">After Effects</span>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+  <div class="section-header reveal">
+    <h2 class="section-title">What I <em>Do</em></h2>
+    <span class="section-num">— 02</span>
+  </div>
+  <div class="services-grid">
+    <div class="service-item reveal">
+      <span class="service-num">01</span>
+      <h3 class="service-name">Brand Identity</h3>
+      <p class="service-desc">Full visual identity systems — logos, color, typography, and brand guidelines that give businesses a distinct, lasting presence.</p>
+    </div>
+    <div class="service-item reveal reveal-delay-1">
+      <span class="service-num">02</span>
+      <h3 class="service-name">Print & Editorial</h3>
+      <p class="service-desc">Magazines, books, posters, and packaging — compositions built for the physical world with editorial precision.</p>
+    </div>
+    <div class="service-item reveal reveal-delay-2">
+      <span class="service-num">03</span>
+      <h3 class="service-name">Digital Design</h3>
+      <p class="service-desc">UI design, social media visuals, and digital campaigns that hold visual integrity across every screen size.</p>
+    </div>
+    <div class="service-item reveal">
+      <span class="service-num">04</span>
+      <h3 class="service-name">Motion & Animation</h3>
+      <p class="service-desc">Animated logos, kinetic typography, and motion graphics that give your brand movement and life.</p>
+    </div>
+    <div class="service-item reveal reveal-delay-1">
+      <span class="service-num">05</span>
+      <h3 class="service-name">Art Direction</h3>
+      <p class="service-desc">Creative direction for photo shoots, campaigns, and visual narratives — shaping the mood and vision behind the lens.</p>
+    </div>
+    <div class="service-item reveal reveal-delay-2">
+      <span class="service-num">06</span>
+      <h3 class="service-name">Illustration</h3>
+      <p class="service-desc">Custom visual language — original illustrations that carry personality and stand apart from stock.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-bg-text">Let's Talk</div>
+  <p class="contact-label">Get in touch</p>
+  <h2 class="contact-heading">Have a project<br>in <em>mind?</em></h2>
+  <a href="mailto:arif@example.com" class="contact-email">arif@example.com</a>
+  <div class="contact-socials">
+    <a href="#">Behance</a>
+    <a href="#">Dribbble</a>
+    <a href="#">Instagram</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2026 Arif Hossen. All rights reserved.</span>
+  <span class="footer-copy">Dhaka, Bangladesh</span>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .work-item, .service-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '14px';
+      cursor.style.height = '14px';
+      ring.style.width = '48px';
+      ring.style.height = '48px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '8px';
+      cursor.style.height = '8px';
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+    });
+  });
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
